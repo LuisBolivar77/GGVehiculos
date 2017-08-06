@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">GGVehiculos</string>
+
+    <string-array name="marcas">
+        <item>Seleccione una marca</item>
+        <item>Mazda</item>
+        <item>Ford</item>
+        <item>Toyota</item>
+        <item>Honda</item>
+    </string-array>
+
+    <string-array name="tipoVehiculo">
+        <item>Seleccione un Tipo de Vehiculo</item>
+        <item>Automovil</item>
+        <item>Bus</item>
+        <item>Buseta</item>
+        <item>Campero</item>
+        <item>Camion</item>
+    </string-array>
 </resources>

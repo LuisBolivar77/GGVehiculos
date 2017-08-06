@@ -3,6 +3,7 @@ package com.example.luchobolivar.ggvehiculos;
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -14,6 +15,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RegistroVehiActivity extends AppCompatActivity {
 
@@ -22,8 +25,9 @@ public class RegistroVehiActivity extends AppCompatActivity {
     Spinner marca;
     Spinner tipoVehiculo;
     EditText numeroPasajeros;
-    ArrayAdapter<String> adapterMarcas;
-    String marcas = "Marcas.txt";
+    ArrayAdapter<CharSequence> adpaterMarcas;
+    ArrayAdapter<CharSequence> adpaterTipoVehiculo;
+    String listaVehiculos = "listaVehiculos.txt";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,16 +39,29 @@ public class RegistroVehiActivity extends AppCompatActivity {
         tipoVehiculo = (Spinner) findViewById(R.id.cbTipoVehiculo);
         numeroPasajeros = (EditText) findViewById(R.id.etNumeroDePasajeros);
 
+        adpaterMarcas = ArrayAdapter.createFromResource(this, R.array.marcas, android.R.layout.simple_spinner_item);
+        adpaterMarcas.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        marca.setAdapter(adpaterMarcas);
+
+        adpaterTipoVehiculo = ArrayAdapter.createFromResource(this, R.array.tipoVehiculo, android.R.layout.simple_spinner_item);
+        adpaterTipoVehiculo.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        tipoVehiculo.setAdapter(adpaterTipoVehiculo);
+
+    }
+
+
+    public String archivoExixstente(String listaVehicu) {
+
         String[] archivos = fileList();
 
-        if(existeArchivo(archivos, marcas)){
-            try{
+        if (existeArchivo(archivos, listaVehicu)) {
+            try {
                 InputStreamReader archivo = new InputStreamReader(
-                        openFileInput(marcas));
+                        openFileInput(listaVehicu));
                 BufferedReader br = new BufferedReader(archivo);
                 String linea = br.readLine();
                 String todo = "";
-                while (linea != null){
+                while (linea != null) {
                     todo = todo + linea + "\n";
                     linea = br.readLine();
 
@@ -52,53 +69,87 @@ public class RegistroVehiActivity extends AppCompatActivity {
 
                 br.close();
                 archivo.close();
+                return todo;
 
 
-
-            }catch (IOException e){
+            } catch (IOException e) {
                 Toast.makeText(this, "error ", Toast.LENGTH_SHORT).show();
             }
 
 
         }
 
+        return null;
 
 
     }
 
-    public void grabar(View view){
+
+    public void grabar(View view) {
 
         String placa = placaVehiculo.getText().toString();
 
-        try{
-            OutputStreamWriter writer = new OutputStreamWriter(
-                    openFileOutput(placa, Activity.MODE_PRIVATE));
 
-            writer.write(placa + " " + marca.getSelectedItem() + " "
-                    + tipoVehiculo.getSelectedItem() + " " + numeroPasajeros.getText().toString());
-            writer.flush();
-            writer.close();
+        if (archivoExixstente(listaVehiculos) == null) {
 
-            placaVehiculo.setText("");
-            marca.setSelection(0);
-            tipoVehiculo.setSelection(0);
-            numeroPasajeros.setText("");
+            try {
+                OutputStreamWriter writer = new OutputStreamWriter(
+                        openFileOutput(listaVehiculos, Activity.MODE_PRIVATE));
 
-            Toast.makeText(this, "Vehiculo Registrado", Toast.LENGTH_SHORT).show();
+                writer.write(placa + "," + marca.getSelectedItem() + ","
+                        + tipoVehiculo.getSelectedItem() + "," + numeroPasajeros.getText().toString());
+                writer.flush();
+                writer.close();
+
+                placaVehiculo.setText("");
+                marca.setSelection(0);
+                tipoVehiculo.setSelection(0);
+                numeroPasajeros.setText("");
+
+                Toast.makeText(this, "Vehiculo Registrado", Toast.LENGTH_SHORT).show();
 
 
-        }catch (IOException e){
+            } catch (IOException e) {
 
-            Toast.makeText(this, "Error al intentar Registrar el vehiculo", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Error al intentar Registrar el vehiculo", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }else{
+
+            try {
+                OutputStreamWriter writer = new OutputStreamWriter(
+                        openFileOutput(listaVehiculos, Activity.MODE_PRIVATE));
+
+                writer.write(archivoExixstente(listaVehiculos) + "" +  placa + " " + marca.getSelectedItem() + " "
+                        + tipoVehiculo.getSelectedItem() + " " + numeroPasajeros.getText().toString());
+                Log.e(archivoExixstente(listaVehiculos), "vehiculos Existenteeeeeeeesssssssss");
+                writer.flush();
+                writer.close();
+
+                placaVehiculo.setText("");
+                marca.setSelection(0);
+                tipoVehiculo.setSelection(0);
+                numeroPasajeros.setText("");
+
+                Toast.makeText(this, "Vehiculo Registrado", Toast.LENGTH_SHORT).show();
+
+
+            } catch (IOException e) {
+
+                Toast.makeText(this, "Error al intentar Registrar el vehiculo", Toast.LENGTH_SHORT).show();
+
+            }
+
 
         }
 
     }
 
-    private boolean existeArchivo(String [] archivos, String archBuscar){
+    private boolean existeArchivo(String[] archivos, String archBuscar) {
 
-        for (int f=0; f< archivos.length; f++){
-            if(archBuscar.equals(archivos[f])){
+        for (int f = 0; f < archivos.length; f++) {
+            if (archBuscar.equals(archivos[f])) {
                 return true;
             }
 
