@@ -90,16 +90,19 @@ public class RegistroVehiActivity extends AppCompatActivity {
         String placa = placaVehiculo.getText().toString();
 
 
-        if (archivoExixstente(listaVehiculos) == null) {
+        if(archivoExixstente(listaVehiculos) == null) {
 
             try {
-                OutputStreamWriter writer = new OutputStreamWriter(
-                        openFileOutput(listaVehiculos, Activity.MODE_PRIVATE));
+                OutputStreamWriter archivo = new OutputStreamWriter
+                        (openFileOutput(
+                                listaVehiculos, Activity.MODE_PRIVATE));
 
-                writer.write(placa + "," + marca.getSelectedItem() + ","
-                        + tipoVehiculo.getSelectedItem() + "," + numeroPasajeros.getText().toString());
-                writer.flush();
-                writer.close();
+                archivo.write(placa + " " + marca.getSelectedItem().toString() + " " + tipoVehiculo.getSelectedItem().toString() +
+                        " " + numeroPasajeros.getText().toString());
+
+                archivo.flush();
+
+                archivo.close();
 
                 placaVehiculo.setText("");
                 marca.setSelection(0);
@@ -118,14 +121,18 @@ public class RegistroVehiActivity extends AppCompatActivity {
         }else{
 
             try {
-                OutputStreamWriter writer = new OutputStreamWriter(
-                        openFileOutput(listaVehiculos, Activity.MODE_PRIVATE));
+                String archivoAntiguo = archivoExixstente(listaVehiculos);
 
-                writer.write(archivoExixstente(listaVehiculos) + "" +  placa + " " + marca.getSelectedItem() + " "
-                        + tipoVehiculo.getSelectedItem() + " " + numeroPasajeros.getText().toString());
-                Log.e(archivoExixstente(listaVehiculos), "vehiculos Existenteeeeeeeesssssssss");
-                writer.flush();
-                writer.close();
+                OutputStreamWriter archivo = new OutputStreamWriter
+                        (openFileOutput(
+                                listaVehiculos, Activity.MODE_PRIVATE));
+
+                archivo.write(archivoAntiguo + " " + placa + " " + marca.getSelectedItem().toString() + " " + tipoVehiculo.getSelectedItem().toString() +
+                        " " + numeroPasajeros.getText().toString());
+
+                archivo.flush();
+
+                archivo.close();
 
                 placaVehiculo.setText("");
                 marca.setSelection(0);
@@ -141,8 +148,8 @@ public class RegistroVehiActivity extends AppCompatActivity {
 
             }
 
-
         }
+
 
     }
 
